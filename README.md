@@ -1,14 +1,16 @@
 <!--
  * @Author: Wade Zhong wzhong@hso.com
  * @Date: 2024-04-19 16:17:43
- * @LastEditTime: 2024-04-24 15:07:28
+ * @LastEditTime: 2024-04-24 15:46:45
  * @LastEditors: Wade Zhong wzhong@hso.com
  * @Description: 
  * @FilePath: \JavaScriptWPSMacros\README.md
  * Copyright (c) 2024 by Wade Zhong wzhong@hso.com, All Rights Reserved. 
 -->
-# JavaScriptWPSMacros
-搜集常见的WPS宏命令
+# JavaScriptWPSMacros 搜集常见的WPS宏命令
+
+## AllSheetsCombinationsJoin
+通过WPS的宏命令得到整个工作簿的笛卡尔积数据
 
 ## NodeJSCreatXLSXByMock
 通过Node的Mock框架生成模拟数据 生成Excel
