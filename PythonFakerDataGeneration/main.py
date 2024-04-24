@@ -1,7 +1,7 @@
 '''
 Author: Wade Zhong wzhong@hso.com
 Date: 2024-04-24 15:01:12
-LastEditTime: 2024-04-24 15:40:20
+LastEditTime: 2024-04-24 16:43:13
 LastEditors: Wade Zhong wzhong@hso.com
 Description: 
 FilePath: \JavaScriptWPSMacros\PythonFakerDataGeneration\main.py
@@ -9,7 +9,10 @@ Copyright (c) 2024 by Wade Zhong wzhong@hso.com, All Rights Reserved.
 '''
 import pandas as pd
 from faker import Faker
+
+from faker.providers import BaseProvider
 import random
+import string
 import uuid
 
 # 初始化 Faker 库，设置为中国区域
@@ -53,22 +56,47 @@ users = pd.DataFrame({
 })
 
 # 生成订单数据
-ordersLength = 100
+ordersLength = 138
+# 创建一个自定义的Provider
+class OrderNumberCustomProvider(BaseProvider):
+    def order_id(self, date_time):
+        # 从日期时间字符串中提取年月日
+        ymd = date_time[:10].replace('-', '')
+        # 生成一个6个字符的随机字符串，包括数字和小写字母
+        rand_str = ''.join(random.choices(string.ascii_uppercase  + string.digits, k=6))
+        # 返回订单编号
+        return 'O' + ymd + rand_str
+fake.add_provider(OrderNumberCustomProvider)
+# 假设你已经有了一个日期时间列表
+order_date_times = [fake.date_time_between(start_date='-1y', end_date='now').strftime("%Y-%m-%d %H:%M:%S") for _ in range(ordersLength)]
+# 使用自定义的Provider来生成订单编号
+order_numbers = [fake.order_id(dt) for dt in order_date_times]
+
 orders = pd.DataFrame({
     'order_id': [str(uuid.uuid4()) for _ in range(ordersLength)],
     'product_id': [random.choice(products['product_id']) for _ in range(ordersLength)],
     'user_id': [random.choice(users['user_id']) for _ in range(ordersLength)],
     'quantity': [random.randint(1, 10) for _ in range(ordersLength)],
-    'date_time': [fake.date_time() for _ in range(ordersLength)]
+    'status': [random.choice(["待处理","进行中","已完成","已取消","已退货","已退款","退款中","已换货","换货中","已评价"]) for _ in range(ordersLength)],  # 订单状态
+    'date_time': order_date_times,
+    'order_number': order_numbers
 })
+orders = orders.sort_values(by='date_time', ascending=False)
 
 # 生成订单详情数据
 orderDetailsLength = 800
+# 假设你已经有了quantity和price两个列表
+order_details_quantity = [random.randint(1, 10) for _ in range(orderDetailsLength)]
+order_details_price = [random.uniform(10.0, 200.0) for _ in range(orderDetailsLength)]
+# 现在，amount列表包含了quantity和price每行相乘的结果
+
 order_details = pd.DataFrame({
     'order_id': [random.choice(orders['order_id']) for _ in range(orderDetailsLength)],
     'product_id': [random.choice(products['product_id']) for _ in range(orderDetailsLength)],
-    'quantity': [random.randint(1, 10) for _ in range(orderDetailsLength)],
-    'price': [random.uniform(10.0, 200.0) for _ in range(orderDetailsLength)]
+    'quantity': order_details_quantity,
+    'price': order_details_price,
+    # 使用列表推导式来计算每行的金额
+    'amount':[q * p for q, p in zip(order_details_quantity, order_details_price)]  #第一次用震惊到我了，python写法真的很简练呀！！！
 })
 # 按照订单ID排序订单详情数据
 order_details = order_details.sort_values(by='order_id')
