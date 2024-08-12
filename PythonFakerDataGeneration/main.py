@@ -3,7 +3,7 @@ Author: Wade Zhong wzhong@hso.com
 Date: 2024-04-24 15:01:12
 LastEditTime: 2024-04-24 16:43:13
 LastEditors: Wade Zhong wzhong@hso.com
-Description: 
+Description: 使用Faker库，实现模拟数据、测试用例数据的生成
 FilePath: \JavaScriptWPSMacros\PythonFakerDataGeneration\main.py
 Copyright (c) 2024 by Wade Zhong wzhong@hso.com, All Rights Reserved. 
 '''
